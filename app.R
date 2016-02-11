@@ -21,7 +21,8 @@ server <- function(input, output) {
   
   output$sliders <- renderUI({
     lapply(1:length(labels.brain), function(i) {
-      sliderInput(inputId = paste0('sl', i), label = labels.brain[i], min = 1, max = maxRange, value = floor(runif(1, 1, maxRange + 1)))
+      div(style = "transform: scale(0.9, 0.9); height: 75px;",
+          sliderInput(inputId = paste0('sl', i), label = labels.brain[i], min = 1, max = maxRange, value = floor(runif(1, 1, maxRange + 1))))
     })
   })
   
@@ -49,7 +50,7 @@ server <- function(input, output) {
                       input$sl6, input$sl7, input$sl8, input$sl9)
     colorRamp <- colorRampPalette(brewer.pal(9, input$selCol))(maxRange)
     plot(myMap, col=colorRamp[values.brain])
-  })
+  }, height = 500)
   
 }
 
@@ -62,6 +63,7 @@ ui <- shinyUI(fluidPage(
                column(6, offset = 3, plotOutput('brainMapLabels'))
              )),
     tabPanel('interactive',
+             br(),
              fluidRow(
                column(3, uiOutput('sliders')),
                column(9, selectInput('selCol', 'color palette', choices=colorScale),
