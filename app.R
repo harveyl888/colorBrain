@@ -9,15 +9,37 @@
 
 library(shiny)
 library(maptools)
+library(RColorBrewer)
 
 myMap <- readShapePoly('./data/brain_shape.shp')
 labels.brain <- c('frontal lobe', 'precentral gyrus', 'postcentral gyrus', 'parietal lobe',
                   'occipital lobe', 'temporal lobe', 'cerebellum', 'pons', 'medulla oblongata')
+maxRange <- 200
 
 server <- function(input, output) {
+  
+  output$sliders <- renderUI({
+    lapply(1:length(labels.brain), function(i) {
+      sliderInput(inputId = paste0('sl', i), label = labels.brain[i], min = 1, max = maxRange, value = floor(runif(1, 1, maxRange + 1)))
+    })
+  })
+  
+  output$brainMap <- renderPlot({
+    values.brain <- c(input$sl1, input$sl2, input$sl3, input$sl4, input$sl5,
+                      input$sl6, input$sl7, input$sl8, input$sl9)
+    colorRamp <- colorRampPalette(brewer.pal(9, "Blues"))(maxRange)
+    plot(myMap, col=colorRamp[values.brain])
+  })
+  
 }
 
 ui <- shinyUI(fluidPage(
+  sidebarLayout(
+    sidebarPanel(
+      uiOutput('sliders')
+    ),
+    mainPanel(plotOutput("brainMap"))
+  )
 ))
 
 shinyApp(ui = ui, server = server)
