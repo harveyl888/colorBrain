@@ -69,13 +69,4 @@ ui <- shinyUI(fluidPage(
   )
 ))
 
-# ui <- shinyUI(fluidPage(
-#   sidebarLayout(
-#     sidebarPanel(
-#       uiOutput('sliders')
-#     ),
-#     mainPanel(plotOutput("brainMap"))
-#   )
-# ))
-
 shinyApp(ui = ui, server = server)
