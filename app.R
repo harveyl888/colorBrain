@@ -24,7 +24,26 @@ server <- function(input, output) {
     })
   })
   
-  output$brainMap <- renderPlot({
+  output$brainMapLattice <- renderPlot({
+    brainRows <- 3
+    brainCols <- 5
+    colorRamp <- colorRampPalette(brewer.pal(9, "Blues"))(maxRange)
+    par(mfrow = c(brainRows, brainCols), mar = c(1 ,1 ,1 ,1))
+    for (i in 1:brainRows) {
+      for (j in 1:brainCols) {
+        ref <- j + (i - 1) * brainCols
+        values.brain <- floor(runif(11, 1, maxRange + 1))
+        plot(myMap, col=colorRamp[values.brain], main = paste0('brain ref: ', ref))
+      }
+    }
+  })
+  
+  output$brainMapLabels <- renderPlot({
+    plot(myMap)
+    text(coordinates(myMap), labels = labels.brain, cex=0.8)
+  })
+  
+  output$brainMapInteractive <- renderPlot({
     values.brain <- c(input$sl1, input$sl2, input$sl3, input$sl4, input$sl5,
                       input$sl6, input$sl7, input$sl8, input$sl9)
     colorRamp <- colorRampPalette(brewer.pal(9, "Blues"))(maxRange)
@@ -34,12 +53,29 @@ server <- function(input, output) {
 }
 
 ui <- shinyUI(fluidPage(
-  sidebarLayout(
-    sidebarPanel(
-      uiOutput('sliders')
-    ),
-    mainPanel(plotOutput("brainMap"))
+  tabsetPanel(
+    tabPanel('mutiple sets',
+             br(),
+             plotOutput('brainMapLattice'),
+             fluidRow(
+               column(6, offset = 3, plotOutput('brainMapLabels'))
+             )),
+    tabPanel('interactive',
+             fluidRow(
+               column(3, uiOutput('sliders')),
+               column(9, plotOutput('brainMapInteractive'))
+             )
+    )
   )
 ))
+
+# ui <- shinyUI(fluidPage(
+#   sidebarLayout(
+#     sidebarPanel(
+#       uiOutput('sliders')
+#     ),
+#     mainPanel(plotOutput("brainMap"))
+#   )
+# ))
 
 shinyApp(ui = ui, server = server)
