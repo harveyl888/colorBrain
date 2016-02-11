@@ -8,6 +8,11 @@
 #
 
 library(shiny)
+library(maptools)
+
+myMap <- readShapePoly('./data/brain_shape.shp')
+labels.brain <- c('frontal lobe', 'precentral gyrus', 'postcentral gyrus', 'parietal lobe',
+                  'occipital lobe', 'temporal lobe', 'cerebellum', 'pons', 'medulla oblongata')
 
 server <- function(input, output) {
 }
