@@ -14,6 +14,7 @@ library(RColorBrewer)
 myMap <- readShapePoly('./data/brain_shape.shp')
 labels.brain <- c('frontal lobe', 'precentral gyrus', 'postcentral gyrus', 'parietal lobe',
                   'occipital lobe', 'temporal lobe', 'cerebellum', 'pons', 'medulla oblongata')
+colorScale <- c('Blues', 'Greens', 'Reds', 'PuBuGn', 'YlOrRd')
 maxRange <- 200
 
 server <- function(input, output) {
@@ -46,7 +47,7 @@ server <- function(input, output) {
   output$brainMapInteractive <- renderPlot({
     values.brain <- c(input$sl1, input$sl2, input$sl3, input$sl4, input$sl5,
                       input$sl6, input$sl7, input$sl8, input$sl9)
-    colorRamp <- colorRampPalette(brewer.pal(9, "Blues"))(maxRange)
+    colorRamp <- colorRampPalette(brewer.pal(9, input$selCol))(maxRange)
     plot(myMap, col=colorRamp[values.brain])
   })
   
@@ -63,7 +64,8 @@ ui <- shinyUI(fluidPage(
     tabPanel('interactive',
              fluidRow(
                column(3, uiOutput('sliders')),
-               column(9, plotOutput('brainMapInteractive'))
+               column(9, selectInput('selCol', 'color palette', choices=colorScale),
+                      plotOutput('brainMapInteractive'))
              )
     )
   )
